@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { Plus, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import Header from '../components/header';
 
 export default function Feed() {
+  const [user, setUser] = useState<any>(null);
   const [projects, setProjects] = useState<any[]>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -13,6 +15,7 @@ export default function Feed() {
   const [side, setSide] = useState<'endorse' | 'challenge'>('endorse');
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null));
     fetchProjects();
   }, []);
 
@@ -25,32 +28,26 @@ export default function Feed() {
   };
 
   const createProject = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return alert("Please sign in first");
-
     await supabase.from('projects').insert({
       author_id: user.id,
       title,
       description,
       repo_url: repoUrl,
     });
-
     setTitle(''); setDescription(''); setRepoUrl('');
     fetchProjects();
-    alert("✅ Project posted to the Feed!");
+    alert("✅ Project posted!");
   };
 
   const addSignal = async (projectId: string, signalType: 'endorse' | 'challenge') => {
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return alert("Please sign in first");
-
     await supabase.from('trust_signals').insert({
       project_id: projectId,
       signaler_id: user.id,
       type: signalType,
       points
     });
-
     fetchProjects();
     alert(`✅ ${signalType.toUpperCase()}D with ${points} Trust Points!`);
   };
@@ -58,6 +55,8 @@ export default function Feed() {
   return (
     <div className="min-h-screen p-8 font-mono bg-[#0a0a0a] text-[#00ff41]">
       <div className="max-w-4xl mx-auto">
+        <Header user={user} />
+
         <h1 className="text-5xl font-bold glow-green mb-8">THE FEED</h1>
 
         {/* Create New Project */}
@@ -65,7 +64,7 @@ export default function Feed() {
           <h2 className="text-2xl mb-6">Post a New Project</h2>
           <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Project Title" className="w-full bg-black border border-[#00ff41]/50 p-4 mb-4" />
           <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="What are you building?" className="w-full bg-black border border-[#00ff41]/50 p-4 mb-4 h-32" />
-          <input value={repoUrl} onChange={e => setRepoUrl(e.target.value)} placeholder="GitHub Repo URL[](https://...)" className="w-full bg-black border border-[#00ff41]/50 p-4 mb-6" />
+          <input value={repoUrl} onChange={e => setRepoUrl(e.target.value)} placeholder="GitHub Repo URL" className="w-full bg-black border border-[#00ff41]/50 p-4 mb-6" />
           <button onClick={createProject} className="w-full bg-[#00ff41] text-black py-5 font-bold text-xl hover:bg-white">
             <Plus className="inline w-6 h-6 mr-2" /> POST PROJECT
           </button>
@@ -81,9 +80,7 @@ export default function Feed() {
 
               <div className="mt-8 flex items-center gap-8">
                 <div className="text-5xl font-bold glow-green">{p.signal_score || 0}</div>
-                <div>
-                  <div className="text-sm opacity-70">SIGNAL SCORE</div>
-                </div>
+                <div className="text-sm opacity-70">SIGNAL SCORE</div>
 
                 <div className="flex gap-4 ml-auto">
                   <button onClick={() => { setSelectedProject(p); setSide('endorse'); }} className="border border-[#00ff41] px-8 py-4 hover:bg-[#00ff41]/10 flex items-center gap-3">
