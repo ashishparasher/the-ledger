@@ -14,7 +14,7 @@ export default function Header({ user }: { user: any }) {
       <div className="flex justify-between items-center">
         <Link href="/" className="text-4xl font-bold glow-green tracking-tighter">THE LEDGER</Link>
         
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-8 text-lg">
           <Link href="/" className="hover:text-white transition">HOME</Link>
           <Link href="/citadel" className="hover:text-white transition">THE FEED</Link>
           
@@ -24,13 +24,19 @@ export default function Header({ user }: { user: any }) {
                 <User className="w-6 h-6" />
                 <span>{user.user_metadata.full_name || user.email}</span>
               </div>
-              <button onClick={handleLogout} className="flex items-center gap-2 text-red-400 hover:text-red-500">
+              <button 
+                onClick={handleLogout} 
+                className="flex items-center gap-2 text-red-400 hover:text-red-500 transition"
+              >
                 <LogOut className="w-5 h-5" /> LOGOUT
               </button>
             </div>
           ) : (
-            <Link href="/" className="bg-white text-black px-6 py-3 font-bold flex items-center gap-2 hover:bg-[#00ff41]">
-              <LogIn className="w-5 h-5" /> SIGN IN
+            <Link 
+              href="/" 
+              className="bg-white text-black px-8 py-3 font-bold flex items-center gap-2 hover:bg-[#00ff41] transition"
+            >
+              <LogIn className="w-5 h-5" /> SIGN IN WITH GITHUB
             </Link>
           )}
         </div>
