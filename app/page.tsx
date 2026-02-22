@@ -75,6 +75,13 @@ export default function Citadel() {
   return (
     <div className="min-h-screen p-8 font-mono crt">
       <div className="max-w-3xl mx-auto text-center">
+        
+        {/* NAVIGATION BAR */}
+        <div className="flex justify-between items-center mb-12 border-b border-[#00ff41]/30 pb-6">
+          <a href="/" className="text-3xl font-bold glow-green">THE LEDGER</a>
+          <a href="/citadel" className="border border-[#00ff41] px-8 py-3 hover:bg-[#00ff41]/10 text-lg">THE FEED →</a>
+        </div>
+
         <Terminal className="w-20 h-20 mx-auto mb-6 text-[#00ff41]" />
         <h1 className="text-7xl font-bold glow-green mb-4 tracking-tighter">THE LEDGER</h1>
         <p className="text-2xl opacity-80 mb-12">Anti-Moltbook Citadel</p>
